@@ -1,17 +1,26 @@
-# HTML
-# Archive your static HTML project and save it with the build record.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Node.js with Angular
+# Build a Node.js project that uses Angular.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-- master
+- refs/tags/v*
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: ubuntu-22.04
+  
+variables:
+- group: IAT
+- group: EDL-API-DEFAULTS
 
 steps:
-- task: ArchiveFiles@2
+- task: NodeTool@0
+  displayName: 'Install Node 16.x'
   inputs:
-    rootFolderOrFile: '$(build.sourcesDirectory)'
-    includeRootFolder: false
-- task: PublishBuildArtifacts@1
+    versionSpec: 16.x
+
+- script: |
+   npm install -g @angular/cli@14.x
+   npm install
+   ng build --configuration production
+  displayName: 'NPM and Angular 14 install, and build Frontend software'
